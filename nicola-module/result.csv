@@ -1,0 +1,3 @@
+002,happy,"{'happy': 99.95, 'neutral': 0.05, 'sad': 0.0}",relaxed,2026-08-26T12:57:45
+003,sad,"{'sad': 27.48, 'neutral': 27.09, 'angry': 21.13}",stressed,2026-08-26T12:59:35
+004,neutral,"{'neutral': 64.84, 'happy': 25.33, 'fear': 6.71}",neutral,2026-08-26T13:00:55

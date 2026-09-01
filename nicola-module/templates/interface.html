@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pagina in cui si può caricare  la propria immagine">
+    <meta name="author" content="ShoopMood">
+    <script src="{{ url_for('static', filename='check.js') }}" defer></script>
+      <script src="{{ url_for(  'static', filename='foto.js') }}" defer></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <title>ShopMood</title>
+
+</head>
+
+<body>
+
+    <header>
+        <h1>Benvenuto {{ current_user.username }}</h1>
+    </header>
+
+    <main>
+        <div class="upload-card">
+            <h2>Carica un'immagine</h2>
+            <form id="form-img" action="/analyze_img" method="POST" enctype="multipart/form-data">
+                <div class="upload-row">
+                    <input type="file" id="img_input" name="img_input" accept="image/*" required>
+                    <button id="pulsante-img" type="submit">Carica immagine</button>
+                </div>
+            </form>
+            <br>
+            <p id="risultato-img"></p>
+        </div>  
+
+        <div class="upload-card">
+            <h2>Scatta una foto</h2>
+            <video id="video" width="640" height="480" autoplay style="display:none;"></video>
+            <button id="attiva">Attiva webcam</button>
+            <br>
+            <button id="scatta" style="display:none;">Scatta Foto</button>
+            <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+            <br>
+            <img id="foto" style="display:none;" />
+            <br>
+            <p id="risultato"></p>
+        </div>
+
+        <div class="upload-card">
+            <h2>Carica un video</h2>
+            <form id="form-video" action="/analyze_video" method="POST" enctype="multipart/form-data">
+                <div class="upload-row">
+                    <input type="file" id="video_input" name="video_input" accept="video/*" required onchange="controlloDimensione()">
+                    <button type="submit" id="buttonVideo" disabled>Carica video</button>
+                </div>
+                <br>
+            </form>
+            <br>
+            <p id="risultato-video"></p>
+            <p id="videoError" style="display:none; color: red;">
+                La dimensione del video deve essere inferiore o uguale a 3MB
+            </p>
+        </div>
+    </main>
+
+</body>

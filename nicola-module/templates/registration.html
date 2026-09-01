@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Sign Up</title>
+</head>
+<body>
+    <div class="page-wrapper">
+        <h1 class="site-title">ShopMood</h1>
+        <div class="container">
+            <p class="nav-links">
+                <a href="/login">Login</a></li>
+                <a href="/register">Create account</a></li>
+            </p>
+
+            <h1>Create an account</h1>
+
+            {% if error %}
+                <p class="error">{{ error }}</p>
+            {% endif %}
+
+            <form action="/register" method="post" class="form">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" name="username" required />
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" required />
+                </div>
+                <button type="submit" class="btn-login">Sign Up</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
