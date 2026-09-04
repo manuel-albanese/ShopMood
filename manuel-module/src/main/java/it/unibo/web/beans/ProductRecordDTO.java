@@ -28,7 +28,18 @@ public class ProductRecordDTO implements Serializable {
 	private String price;
 	private List<String> description;
 	private Integer rating_number;
+	private Float score;
 	
+	
+	
+	public Float getScore() {
+		return score;
+	}
+
+	public void setScore(Float score) {
+		this.score = score;
+	}
+
 	public ProductRecordDTO() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -104,6 +115,7 @@ public class ProductRecordDTO implements Serializable {
 		this.price = price;
 		this.description = description;
 		this.rating_number = rating_number;
+		this.score = (float) 0;
 	}
 	
 	

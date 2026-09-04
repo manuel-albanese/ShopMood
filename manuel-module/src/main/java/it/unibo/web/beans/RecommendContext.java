@@ -1,8 +1,16 @@
 package it.unibo.web.beans;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
-
 import javax.servlet.ServletContext;
+
+import it.unibo.web.dao.DAOFactory;
+import it.unibo.web.dao.LabelRecordDAO;
+import it.unibo.web.dao.NoteRecordDAO;
+import it.unibo.web.dao.ProductRecordDAO;
+import it.unibo.web.dao.ReviewRecordDAO;
+import it.unibo.web.strategy.StrategyFactory;
 
 public class RecommendContext {
 	private ServletContext context;
@@ -72,7 +80,29 @@ public class RecommendContext {
 		this.reviews = reviews;
 	}
 	
-	
-	
+	public RecommendContext(int modality, String userID, ServletContext context) throws IOException, SQLException {
+		super();
+		
+		DAOFactory persistenceFactory = DAOFactory.getDAOFactory(0);
+		ProductRecordDAO productDAO = persistenceFactory.getProductRecordDAO();		
+		this.products = productDAO.readAll();
+		
+		NoteRecordDAO noteDAO = persistenceFactory.getNoteRecordDAO();
+		this.notes  = noteDAO.readByUser(userID);
+		
+		
+		LabelRecordDAO labelDAO = persistenceFactory.getLabelRecordDAO();
+		LabelDTO label = labelDAO.readByUserLast(userID);
+		
+		ReviewRecordDAO reviewDAO = persistenceFactory.getReviewRecordDAO();
+		if(modality==StrategyFactory.POPULARITY)  this.reviews = reviewDAO.readAll();
+		else this.reviews = reviewDAO.readByUser(userID);	
+		
+		this.context = context;
+		this.label = label.getLabel();
+		this.userID = userID;
+
+	}
+
 	
 }

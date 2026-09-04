@@ -1,11 +1,12 @@
 package it.unibo.web.strategy;
 
-import java.util.List;
+
+import java.util.Map;
 
 import it.unibo.web.beans.*;
 
 
 public interface RecommenderStrategy {
 	
-	 public List<Recommendation> recommendProducts(RecommendContext context);
+	 public Map<String, ProductRecordDTO> recommendProducts(RecommendContext context);
 }

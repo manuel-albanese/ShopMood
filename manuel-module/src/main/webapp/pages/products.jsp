@@ -18,7 +18,7 @@
 			</div>
 
 			<%
-			HashMap<ProductRecordDTO, Float>  res = (HashMap<ProductRecordDTO, Float>) request.getAttribute("result");
+			HashMap<String, ProductRecordDTO>  res = (HashMap<String, ProductRecordDTO>) request.getAttribute("result");
 			%>
 
 			<% if (res == null || res.isEmpty()) { %>
@@ -30,14 +30,14 @@
 				<div class="product-grid">
 				<%
 					int rank = 1;
-					for(ProductRecordDTO r : res.keySet()){
+					for(ProductRecordDTO r : res.values()){
 				%>
 					<div class="product-card">
 						<div class="product-rank"><%= rank %></div>
 						<div class="product-body">
 							<p class="product-name"><%= r.getName() %></p>
 							<p class="product-meta"><%= r.getCategory() %><span class="product-id">ID <%= r.getParentID()%></span></p>
-							<span class="product-score"><span class="score-label">Score</span> <%= String.format("%.2f", res.get(r)) %></span>
+							<span class="product-score"><span class="score-label">Score</span> <%= String.format("%.2f", r.getScore()) %></span>
 						</div>
 					</div>
 				<%

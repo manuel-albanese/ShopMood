@@ -1,4 +1,6 @@
 
+INITIAL VERSION (CHANGES IN THE LAST COMMIT ARE DESCRIBED IN THE BOTTOM)
+############################################################################################
 The files represents a Java project for a web application which runs on the Tomcat server. 
 
 To access persistent data (JSON files from the Amazon Review Dataset 2023 and CSV files from Nicola) I used a DAO pattern. This architecture is
@@ -22,7 +24,7 @@ attributed to a recommended product is equal to the rating given by the user aft
 here to allow a possible tuning if we ever change the types of analyzed events (maybe viewed and not purchased products) or the scale of rating
 
 -label without timestamp (Heuristic): with a contextual post-filtering action applied on history-only, the label can give a 50% increase or decrease of the base rating. To simplify the process, I have made a static mapping of all categories present in the Amazon Reviews dataset. The mapping is inspired
-by the paper Emotional Responses to Brands and Product Categories written by Percy, Larry; Hansen, Flemming; Randrup, Rolf. It describes emotional
+by the paper "Emotional Responses to Brands and Product Categories by Percy, Larry; Hansen, Flemming; Randrup, Rolf." It describes emotional
 responses of an individual to certain brands and activities. 
 
 -label with timestamp (partly Heuristic): there is another layer of contextual post-filtering. We take scores given by the label without timestamp 
@@ -34,14 +36,14 @@ distance is 6 months (like August and January) and it lowers by 50% the base sco
 The user can also insert dates into the site (like a birthday or an anniversary). In this way, if there are products bought in that day of the year,
 they will be strongly proposed again at the same day of the interaction (the year is irrelevant). 
 
-Lastly, I applied a time decay exponential function as described in the paper Time-aware recommender systems: a comprehensive
-survey and analysis of existing evaluation protocols by Pedro G. Campos · Fernando Díez ·Iván Cantador. (although it's a second hand 
-citation, since the original came from Time Weight Collaborative Filtering by Ding, Li). But I'm not sure if it's really necessary?
+Lastly, I applied a time decay exponential function as described in the paper "Time-aware recommender systems: a comprehensive
+survey and analysis of existing evaluation protocols by Pedro G. Campos · Fernando Díez ·Iván Cantador." (although it's a second hand 
+citation, since the original concept stems from Time Weight Collaborative Filtering by Ding, Li). But I'm not sure if it's really necessary?
 
 
--text-only(Heuristic): All notes made by a user are analyzed. In this case, we assume that certain key words in the note can be found in the
-titles of the products in the catalogue. For this reasons, we extract the reduced titles (articles like 'The' are not to be included) of all elements 
-and we see if it is contained by the note. 
+-text-only(Heuristic): All notes made by a user are analyzed. In this case, we assume that key words in the notes partially or totally match
+titles of the products in the catalogue. For this reason, we extract a reduced version of the titles with an helper method that deletes initial articles
+and irrelevant details.
 
 Since the application follows Java Model 2, the Controller function is managed by Servlets present in the package it.unibo.web.servlets. There
 is a Note Servlet to insert notes in the CSV file, a DateServlet to insert dates into a context attribute and a RecommendServlet for the 
@@ -50,3 +52,17 @@ recommendation. Every recommendation needs the knowledge of a user ID since ther
 View is composed of 2 JSP, index.jsp and products.jsp. First one is the welcome page where you can interact with the app. The second simply shows
 the recommendation. There is also a javascript file, index.js, which sends AJAX requests for the insertion of notes and dates. Style is realized
 through out default.css.
+
+############################################################################################
+############################################################################################
+############################################################################################
+############################################################################################
+-The new private field "Float score" was added to the bean ProductRecordDTO. It is initialized to 0 at every recommendation request in the concrete DAO Object
+-The signature of the main recommendation method was changed. Now it returns Map<String, ProductRecordDTO>
+-In every strategy, the list of products in the catalogue is inserted into a map. Eventually, the values in the map are filtered to exclude 
+irrelevant elements with a zero score and ordered in a descending way.
+-The class Recommendation was deleted 
+-A new constructor which uses the DAO Pattern was added to RecommendContext. Now, the RecommendServlet is not forced to access persistent data
+
+With these changes, the amount of operations in the RecommendServlet's doPost method have been greatly reduced. In this way, it can be truly be
+considered a Controller without any relevant business logic, accordingly to the MVC pattern.

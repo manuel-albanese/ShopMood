@@ -55,13 +55,16 @@ public class FilesProductRecordDAO implements ProductRecordDAO {
             ObjectMapper mapper = new ObjectMapper();
             String line;
             ArrayList<ProductRecordDTO> result = new ArrayList<>();
+            ProductRecordDTO p = null;
 
             while ((line = buffReader.readLine()) != null) {
-                result.add(mapper.readValue(line, ProductRecordDTO.class));
+            	p = mapper.readValue(line, ProductRecordDTO.class);
+                result.add(p);
             }
             historyReader.close();
             cachedProducts = result;
         }
+        for(ProductRecordDTO p : cachedProducts) p.setScore( (float) 0 );
         return cachedProducts;
     }
 

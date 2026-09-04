@@ -2,21 +2,24 @@ package it.unibo.web.strategy;
 
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import it.unibo.web.beans.NoteRecordDTO;
 import it.unibo.web.beans.ProductRecordDTO;
 import it.unibo.web.beans.RecommendContext;
-import it.unibo.web.beans.Recommendation;
 
 class TextOnlyStrategy implements RecommenderStrategy{
 
 	@Override
-	public List<Recommendation> recommendProducts(RecommendContext context)  {
+	public Map<String, ProductRecordDTO> recommendProducts(RecommendContext context)  {
 		
-		Map<String, Recommendation> recMap = new HashMap<>();
+		Map<String, ProductRecordDTO> productMap = new HashMap<>();
+		for (ProductRecordDTO p : context.getProducts()) productMap.put(p.getParentID(), p);
 		float val;
 		String idP;
 
@@ -28,10 +31,10 @@ class TextOnlyStrategy implements RecommenderStrategy{
         String fullNotesText = sb.toString().trim().toLowerCase();
         
         if (fullNotesText.isEmpty()) {
-            return new ArrayList<>();
+            return productMap;
         }
 			
-			for(ProductRecordDTO product : context.getProducts()) {
+			for(ProductRecordDTO product : productMap.values()) {
 				idP = product.getParentID();
 				name = product.getName().toLowerCase().trim();
 
@@ -40,9 +43,8 @@ class TextOnlyStrategy implements RecommenderStrategy{
 						
 						if(fullNotesText.contains(title) && title.length() > 3) {
 							
-							if(recMap.get(idP)==null) recMap.put(idP, new Recommendation(0, idP));
-							 val = recMap.get(idP).getScore();
-							recMap.get(idP).setScore((float) (val + 1));
+							val=product.getScore();
+							productMap.get(idP).setScore((float) (val + 1));
 						}
 							
 					}
@@ -56,9 +58,16 @@ class TextOnlyStrategy implements RecommenderStrategy{
 		
 		
 
-		ArrayList<Recommendation> res = new ArrayList<Recommendation>(recMap.values());	
-		res.sort((p1, p2) -> Float.compare(p2.getScore(), p1.getScore()));
-		return res;
+			Map<String, ProductRecordDTO> sortedProductMap = productMap.entrySet().stream()
+					.filter(entry -> entry.getValue().getScore() > 0)
+				    .sorted(Comparator.comparing((Map.Entry<String, ProductRecordDTO> e) -> e.getValue().getScore()).reversed())
+				    .collect(Collectors.toMap(
+				        Map.Entry::getKey,
+				        Map.Entry::getValue,
+				        (e1, e2) -> e1,
+				        LinkedHashMap::new
+				    ));
+			return sortedProductMap;
 	}
 	
 	private String extractMainTitle(String rawTitle) {

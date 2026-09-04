@@ -2,39 +2,48 @@ package it.unibo.web.strategy;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+import it.unibo.web.beans.ProductRecordDTO;
 import it.unibo.web.beans.RecommendContext;
-import it.unibo.web.beans.Recommendation;
 import it.unibo.web.beans.ReviewRecordDTO;
 
 
 class PopularityStrategy implements RecommenderStrategy{
 
 	@Override
-	public List<Recommendation> recommendProducts(RecommendContext context)  {
+	public Map<String, ProductRecordDTO> recommendProducts(RecommendContext context)  {
 		
-		Map<String, Recommendation> recMap = new HashMap<>();
+		Map<String, ProductRecordDTO> productMap = new HashMap<>();
+		for (ProductRecordDTO p : context.getProducts()) productMap.put(p.getParentID(), p);
 		float val;
 		String idP;
 
 
-		for(ReviewRecordDTO product : context.getReviews()) {			
-			idP = product.getParentID();
+		for(ReviewRecordDTO review : context.getReviews()) {			
+			idP = review.getParentID();
 			
 			
-			if(recMap.get(idP)==null) recMap.put(idP, new Recommendation(0, idP));
-			Recommendation r = recMap.get(idP);
-			val=r.getScore();
-
 			
-			recMap.get(idP).setScore((float) (val + 1));
+			ProductRecordDTO product = productMap.get(idP);
+			val=product.getScore();
+			
+			productMap.get(idP).setScore((float) (val + 1));
 					
 		}
 		
 
-		ArrayList<Recommendation> res = new ArrayList<Recommendation>(recMap.values());	
-		res.sort((p1, p2) -> Float.compare(p2.getScore(), p1.getScore()));
-		return res;
+		Map<String, ProductRecordDTO> sortedProductMap = productMap.entrySet().stream()
+				.filter(entry -> entry.getValue().getScore() > 0)
+			    .sorted(Comparator.comparing((Map.Entry<String, ProductRecordDTO> e) -> e.getValue().getScore()).reversed())
+			    .collect(Collectors.toMap(
+			        Map.Entry::getKey,
+			        Map.Entry::getValue,
+			        (e1, e2) -> e1,
+			        LinkedHashMap::new
+			    ));
+		
+		return sortedProductMap;
 	}
 
 
