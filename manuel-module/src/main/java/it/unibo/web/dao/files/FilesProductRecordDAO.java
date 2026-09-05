@@ -17,7 +17,7 @@ public class FilesProductRecordDAO implements ProductRecordDAO {
 	private static final String PATH = 
 			FilesProductRecordDAO.class.getClassLoader().getResource(HISTORY).getPath();
 	private static List<ProductRecordDTO> cachedProducts = null;
-
+	private static final Object LOCK = new Object();
 	@Override
 	public ProductRecordDTO read(String id_product) throws IOException, SQLException {
 	ProductRecordDTO product = null;
@@ -36,7 +36,7 @@ public class FilesProductRecordDAO implements ProductRecordDAO {
 	@Override
 	public List<ProductRecordDTO> readAll() throws IOException {
 		
-		return this.loadAll();
+		return FilesProductRecordDAO.loadAll();
 	}
 
 	@Override
@@ -48,7 +48,8 @@ public class FilesProductRecordDAO implements ProductRecordDAO {
         return result;
 	}
 	
-    private synchronized List<ProductRecordDTO> loadAll() throws IOException {
+    private static List<ProductRecordDTO> loadAll() throws IOException {
+    	synchronized (LOCK) {
         if (cachedProducts == null) {
             FileReader historyReader = new FileReader(PATH);
             BufferedReader buffReader = new BufferedReader(historyReader);
@@ -64,8 +65,11 @@ public class FilesProductRecordDAO implements ProductRecordDAO {
             historyReader.close();
             cachedProducts = result;
         }
-        for(ProductRecordDTO p : cachedProducts) p.setScore( (float) 0 );
-        return cachedProducts;
+    	}
+        
+        List<ProductRecordDTO> copy = new ArrayList<>();
+        for(ProductRecordDTO p : cachedProducts) copy.add( new ProductRecordDTO(p));
+        return copy;
     }
 
 

@@ -105,18 +105,19 @@ public class ProductRecordDTO implements Serializable {
 		return serialVersionUID;
 	}
 
-	public ProductRecordDTO(String name, String category, String parentID, Float average_rating, String price,
-			List<String> description, Integer rating_number) {
+	public ProductRecordDTO(ProductRecordDTO other) {
 		super();
-		this.name = name;
-		this.category = category;
-		this.parentID = parentID;
-		this.average_rating = average_rating;
-		this.price = price;
-		this.description = description;
-		this.rating_number = rating_number;
+		this.name = other.name;
+		this.category = other.category;
+		this.parentID = other.parentID;
+		this.average_rating = other.average_rating;
+		this.price = other.price;
+		this.description = other.description;
+		this.rating_number = other.rating_number;
 		this.score = (float) 0;
 	}
+	
+	
 	
 	
 	
