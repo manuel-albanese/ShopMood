@@ -21,17 +21,17 @@ class LabelNoTimestamp implements RecommenderStrategy{
 	private static final Map<String, List<String>> EMOTION_MAP = new HashMap<>();
 	
 	static {
-        EMOTION_MAP.put("stressed", Arrays.asList(
+		EMOTION_MAP.put("stressed", Arrays.asList(
             "Beauty and Personal Care", "Health and Household", 
             "Health and Personal Care", "Grocery and Gourmet_Food"
         ));
 
-        EMOTION_MAP.put("relaxed", Arrays.asList(
+		EMOTION_MAP.put("relaxed", Arrays.asList(
             "Books", "Kindle Store", "Digital Music", "Video Games",
             "Movies and TV", "Patio Lawn_and_Garden", "Arts Crafts_and_Sewing"
         ));
 
-        EMOTION_MAP.put("neutral", Collections.emptyList());
+		EMOTION_MAP.put("neutral", Collections.emptyList());
     }
 	
 	@Override
@@ -51,8 +51,8 @@ class LabelNoTimestamp implements RecommenderStrategy{
 				ProductRecordDTO product = productMap.get(idP);
 				val=product.getScore();
 				
-				factor = (float) (1 + event*Math.log(1 + review.getRating()/constant));
-				factor = factor * this.returnFactor(context.getProducts(),idP,context.getLabel());
+				factor = (float) (event*review.getRating()/constant);
+				factor = factor * this.returnFactor(product,context.getLabel());
 				
 				productMap.get(idP).setScore((float) (val + factor));
 						
@@ -75,24 +75,14 @@ class LabelNoTimestamp implements RecommenderStrategy{
 			return sortedProductMap;
 		}
 	
-	private float returnFactor(List<ProductRecordDTO> products, String ID, String label) {
+	private float returnFactor(ProductRecordDTO product, String label) {
 		
 		List<String> categories = null;
 		float factor = 1;
-		
-		
-		for(ProductRecordDTO product : products) {
-			if(product.getParentID().compareTo(ID)==0) {
-					 if((categories=EMOTION_MAP.get(label))!=null && !categories.isEmpty()) {
-						 
-						 if(categories.contains(product.getCategory())) factor = 1.5f;
-						 else factor = 0.5f;
-					 }
-					 break;
+			if((categories=EMOTION_MAP.get(label))!=null && !categories.isEmpty()) {				 
+				if(categories.contains(product.getCategory())) factor = 1.5f;
+				else factor = 0.5f;
 			}
-		}
-		 
-		 
 		return factor; 
 	}
 
