@@ -123,7 +123,7 @@ class LabelTimestamp implements RecommenderStrategy{
 		    int monthPast = timestamp.toLocalDate().getMonthValue();
 		    int rawDiff = Math.abs(monthNow - monthPast);
 		    int circularDiff = Math.min(rawDiff, 12 - rawDiff); 
-			factor = (float) (factor *  1.5f - (circularDiff / 6.0f));
+			factor = (float) (factor *  (1.5f - circularDiff / 6.0f));
 		
 			
 			return factor;

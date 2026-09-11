@@ -30,9 +30,7 @@ class TextOnlyStrategy implements RecommenderStrategy{
         for (NoteRecordDTO note : context.getNotes()) sb.append(note.getNote().toLowerCase().trim()).append(" ");  
         String fullNotesText = sb.toString().trim().toLowerCase();
         
-        if (fullNotesText.isEmpty()) {
-            return productMap;
-        }
+        if (!fullNotesText.isEmpty()) {
 			
 			for(ProductRecordDTO product : productMap.values()) {
 				idP = product.getParentID();
@@ -54,7 +52,7 @@ class TextOnlyStrategy implements RecommenderStrategy{
 						
 			}
 
-
+	      } 
 		
 		
 

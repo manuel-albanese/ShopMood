@@ -28,7 +28,7 @@ class PopularityStrategy implements RecommenderStrategy{
 			ProductRecordDTO product = productMap.get(idP);
 			val=product.getScore();
 			
-			productMap.get(idP).setScore((float) (val + 1));
+			product.setScore((float) (val + 1));
 					
 		}
 		
