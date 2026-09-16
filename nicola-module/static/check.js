@@ -4,7 +4,7 @@ function controlloDimensione() {
 
     console.log(videoElement.size)
 
-    if (videoElement.size >= 10 * 1024 * 1024) {  //if it is not lower than 10 MB, the button is disabled
+    if (videoElement.size >= 10 * 1024 * 1024) { // max 10 MB
         console.log("File troppo grande")
         document.getElementById("buttonVideo").disabled = true;
         document.getElementById("videoError").style.display = "block";
@@ -20,11 +20,14 @@ function controlloDimensione() {
 const formImg = document.getElementById('form-img');
 const risultatoImg = document.getElementById('risultato-img');
 const pulsanteImg = document.getElementById('pulsante-img');
+const bottoneAttiva = document.getElementById('attiva');
 
 formImg.addEventListener('submit', (event) => {
     event.preventDefault(); 
 
     pulsanteImg.disabled = true
+    pulsanteVideo.disabled = true
+    bottoneAttiva.disabled = true
 
     const formData = new FormData(formImg); 
     fetch(formImg.action, {
@@ -35,6 +38,7 @@ formImg.addEventListener('submit', (event) => {
     .then(data => {
         risultatoImg.textContent = data;
         pulsanteImg.disabled = false
+        bottoneAttiva.disabled = false
     })
     .catch(err => console.error("Errore invio immagine:", err));
 
@@ -49,7 +53,9 @@ const pulsanteVideo =  document.getElementById('buttonVideo');
 formVideo.addEventListener('submit', (event) => {
     event.preventDefault(); 
 
-    pulsanteVideo.disabled = true;
+    pulsanteImg.disabled = true
+    pulsanteVideo.disabled = true
+    bottoneAttiva.disabled = true
 
     const formData = new FormData(formVideo); 
     fetch(formVideo.action, {
@@ -59,7 +65,8 @@ formVideo.addEventListener('submit', (event) => {
     .then(res => res.text())
     .then(data => {
         risultatoVideo.textContent = data;
-        pulsanteVideo.disabled = false;
+        pulsanteImg.disabled = false
+        bottoneAttiva.disabled = false
     })
     .catch(err => console.error("Errore invio video:", err));
 

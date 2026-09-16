@@ -28,10 +28,6 @@ def classifica_emozione(analysis):
 
     soglia = 40
 
-    print(f"Negative Emotion: {scores[0]}")
-    print(f"Positive Emotion: {scores[1]}")
-    print(f"Neutral Emotion: {scores[2]}")
-
     assigned_label = "neutral"
     if scores[0] >= soglia and scores[1] >= soglia:
         assigned_label = "neutral"  # segnali contrastanti = stato ambiguo
@@ -81,9 +77,7 @@ def esegui_analisi_img(file):
     img = np.array(img)
 
     try:
-        analysis = analysis = DeepFace.analyze(
-            img, detector_backend="retinaface", silent=True
-        )
+        analysis = DeepFace.analyze(img, detector_backend="retinaface", silent=True)
         dominant_emotion, assigned_label, ordinato = classifica_emozione(analysis)
         salva_csv(dominant_emotion, assigned_label, ordinato)
     except Exception:
@@ -96,9 +90,7 @@ def esegui_analisi_video(file, skip_frame=10):
     i = 0
     cap = cv.VideoCapture(file)
     if not cap.isOpened():
-        print("Cannot open video")
-        return
-
+        return "Cannot open video"
     emotion_totals = {}
     valid_frames = 0
 
@@ -108,12 +100,13 @@ def esegui_analisi_video(file, skip_frame=10):
             break
         try:
             if i % skip_frame == 0:
-                analysis = DeepFace.analyze(frame, silent=True, enforce_detection=False)
+                analysis = DeepFace.analyze(
+                    frame, silent=True, enforce_detection=False
+                )  # OpenCV
                 print(f"eseguita analisi {i}")
+                # Accumulo dei punteggi per ciascuna emozione
                 for emotion, value in analysis[0]["emotion"].items():
-                    emotion_totals[emotion] = (
-                        emotion_totals.get(emotion, 0) + value
-                    )  # calcolo il valori per tutte le emozioni
+                    emotion_totals[emotion] = emotion_totals.get(emotion, 0) + value
                 valid_frames += 1
             i = i + 1
         except Exception:
@@ -123,8 +116,6 @@ def esegui_analisi_video(file, skip_frame=10):
 
     if valid_frames == 0:
         return "Nessun volto rilevato nel video"
-
-    print(emotion_totals)
 
     avg_emotion = {e: v / valid_frames for e, v in emotion_totals.items()}
     dominant_emotion = max(avg_emotion, key=avg_emotion.get)

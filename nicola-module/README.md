@@ -13,3 +13,6 @@
 - **`static/`**
   - **`check.js`**: Checks the video file size to prevent uploading files that are too large, and sends the uploaded picture or video to the backend.
   - **`foto.js`**: Manages camera activation and deactivation, and sends taken photos to the server.
+
+
+New changes: Uploading a photo or video will now prevent the user from uploading a new file until the processing is complete.
