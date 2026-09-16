@@ -66,3 +66,12 @@ irrelevant elements with a zero score and ordered in a descending way.
 
 With these changes, the amount of operations in the RecommendServlet's doPost method have been greatly reduced. In this way, it can be truly be
 considered a Controller without any relevant business logic, accordingly to the MVC pattern.
+
+RecommendServlet, before the forward operation, also checks if the resulting map is empty. In such case, it uses the Popolarity baseline to obtain
+a non-personalized list.
+
+Eventually, to improve the application's performance, there is a caching system for the catalogue. In detail, FilesProductRecordDAO has two new methods:
+loadAll() e getProducts(). The first one is invoked by RecommendServlet in its method init(). It accesses the JSON file and loads all products in a static
+Array. With this strategy, the catalogue is accessed ONLY one time (when the Servlet is istantiated).  
+
+The second one is a private utility method used in other reading operations. It creates a copy of the static Array used just for the specific HTTP request.

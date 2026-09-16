@@ -17,12 +17,12 @@ public class FilesProductRecordDAO implements ProductRecordDAO {
 	private static final String PATH = 
 			FilesProductRecordDAO.class.getClassLoader().getResource(HISTORY).getPath();
 	private static List<ProductRecordDTO> cachedProducts = null;
-	private static final Object LOCK = new Object();
+
 	@Override
 	public ProductRecordDTO read(String id_product) throws IOException, SQLException {
 	ProductRecordDTO product = null;
 		
-        for (ProductRecordDTO p : loadAll()) {
+        for (ProductRecordDTO p : getProducts()) {
 			if(p.getParentID().compareTo(id_product)==0) {
 				product = p;
 				break;
@@ -36,39 +36,43 @@ public class FilesProductRecordDAO implements ProductRecordDAO {
 	@Override
 	public List<ProductRecordDTO> readAll() throws IOException {
 		
-		return FilesProductRecordDAO.loadAll();
+		return FilesProductRecordDAO.getProducts();
 	}
 
 	@Override
 	public List<ProductRecordDTO> readByCat(String category) throws IOException,SQLException  {
         List<ProductRecordDTO> result = new ArrayList<>();
-        for (ProductRecordDTO p : loadAll()) {
+        for (ProductRecordDTO p : getProducts()) {
             if (p.getCategory().compareTo(category) == 0) result.add(p);
         }
         return result;
 	}
 	
-    private static List<ProductRecordDTO> loadAll() throws IOException {
-    	synchronized (LOCK) {
-        if (cachedProducts == null) {
+    public static void loadAll() throws IOException {
+	
             FileReader historyReader = new FileReader(PATH);
             BufferedReader buffReader = new BufferedReader(historyReader);
             ObjectMapper mapper = new ObjectMapper();
             String line;
             ArrayList<ProductRecordDTO> result = new ArrayList<>();
             ProductRecordDTO p = null;
-
             while ((line = buffReader.readLine()) != null) {
             	p = mapper.readValue(line, ProductRecordDTO.class);
                 result.add(p);
             }
             historyReader.close();
             cachedProducts = result;
-        }
-    	}
         
+    	    
+    }
+    
+    private static List<ProductRecordDTO> getProducts() {
         List<ProductRecordDTO> copy = new ArrayList<>();
-        for(ProductRecordDTO p : cachedProducts) copy.add( new ProductRecordDTO(p));
+        if (cachedProducts != null) {
+            for (ProductRecordDTO p : cachedProducts) {
+                copy.add(new ProductRecordDTO(p));
+            }
+        }
         return copy;
     }
 

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import it.unibo.web.beans.ProductRecordDTO;
 import it.unibo.web.beans.RecommendContext;
+import it.unibo.web.dao.files.FilesProductRecordDAO;
 import it.unibo.web.strategy.RecommenderStrategy;
 import it.unibo.web.strategy.StrategyFactory;
 
@@ -42,6 +43,11 @@ public class RecommendServlet extends HttpServlet {
                 this.getServletContext().setAttribute("days", new HashMap<Long, Integer>());
             }
         }
+        try {
+			FilesProductRecordDAO.loadAll();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
     }
     
@@ -70,6 +76,12 @@ public class RecommendServlet extends HttpServlet {
 			if(strat==null) throw new Exception("Illegal Argument");
 			
 			Map<String, ProductRecordDTO> result = strat.recommendProducts(context);
+			
+			if(result.isEmpty()) {
+				strat =  strategyFactory.getStrategy(StrategyFactory.POPULARITY);
+				result = strat.recommendProducts(context);
+			}
+			
 
 			request.setAttribute("result", result);
 			request.getRequestDispatcher("/pages/products.jsp").forward(request, response);
