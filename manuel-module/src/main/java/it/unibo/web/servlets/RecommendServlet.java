@@ -78,6 +78,7 @@ public class RecommendServlet extends HttpServlet {
 			Map<String, ProductRecordDTO> result = strat.recommendProducts(context);
 			
 			if(result.isEmpty()) {
+				context = new RecommendContext(StrategyFactory.POPULARITY,id_user,this.getServletContext());
 				strat =  strategyFactory.getStrategy(StrategyFactory.POPULARITY);
 				result = strat.recommendProducts(context);
 			}
