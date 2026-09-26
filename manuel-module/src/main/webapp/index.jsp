@@ -47,12 +47,12 @@
 
                         <label for="label_no_ts" class="radio-option">
                             <input type="radio" id="label_no_ts" name="modality" value="1">
-                            <span>Label senza Marca Temporale</span>
+                            <span>Label senza Timestamp</span>
                         </label>
 
                         <label for="label_ts" class="radio-option">
                             <input type="radio" id="label_ts" name="modality" value="2">
-                            <span>Label con Marca Temporale</span>
+                            <span>Label con Timestamp</span>
                         </label>
 
                         <label for="text" class="radio-option">
